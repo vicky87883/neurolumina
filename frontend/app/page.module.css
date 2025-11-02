@@ -1,0 +1,50 @@
+.container {
+  min-height: 100vh;
+  padding: 20px;
+  background: #f5f5f5;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 40px;
+  padding: 20px;
+}
+
+.header h1 {
+  font-size: 36px;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.header p {
+  font-size: 16px;
+  color: #666;
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.section {
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .main {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+
+  .section {
+    flex: 1;
+  }
+
+  .section:first-child {
+    max-width: 400px;
+  }
+}
+

@@ -1,0 +1,118 @@
+================================================================================
+ONLINE POSTGRESQL DATABASE SETUP GUIDE
+================================================================================
+
+This guide shows you how to connect NeuroLumina AI platform to online PostgreSQL databases.
+
+QUICK START - SUPABASE (RECOMMENDED):
+--------------------------------------
+
+1. Go to https://supabase.com
+2. Click "Start your project"
+3. Sign up with GitHub, Google, or email
+4. Create a new project:
+   - Project Name: neurolumina-ai
+   - Database Password: Create a strong password (SAVE IT!)
+   - Region: Choose closest to you
+   - Pricing Plan: Free
+5. Wait 2-3 minutes for database setup
+
+6. Get Connection String:
+   - Go to Settings → Database
+   - Scroll to "Connection string" section
+   - Copy the URI connection string
+   - Format: postgresql://postgres:[YOUR-PASSWORD]@db.xxx.supabase.co:5432/postgres
+   - Replace [YOUR-PASSWORD] with your actual password
+
+7. Update backend/.env file:
+   DATABASE_URL=postgresql://postgres:your_password@db.xxx.supabase.co:5432/postgres
+   ASYNC_DATABASE_URL=postgresql+asyncpg://postgres:your_password@db.xxx.supabase.co:5432/postgres
+
+8. Test connection:
+   cd backend
+   source venv/bin/activate
+   python -c "from services.database import db_manager; import asyncio; print(asyncio.run(db_manager.test_connection()))"
+
+9. Start server:
+   uvicorn app:app --reload --port 8000
+
+ALTERNATIVE PROVIDERS:
+-----------------------
+
+NEON (Serverless PostgreSQL):
+- Website: https://neon.tech
+- Free tier: 3 GB storage, unlimited compute
+- Steps: Sign up → Create project → Copy connection string → Update .env
+
+RAILWAY:
+- Website: https://railway.app
+- Steps: Sign up with GitHub → New Project → Provision PostgreSQL → Copy DATABASE_URL from Variables tab
+
+RENDER:
+- Website: https://render.com
+- Free tier: 90 days trial, 1 GB storage
+- Steps: Sign up → New PostgreSQL → Copy External Database URL → Update .env
+
+AWS RDS:
+- Website: https://aws.amazon.com/rds
+- Free tier: 750 hours/month for 12 months
+- Steps: Create AWS account → RDS → Create database → Configure security group → Copy endpoint
+
+GOOGLE CLOUD SQL:
+- Website: https://cloud.google.com/sql
+- Free tier: $300 credit
+- Steps: Create GCP account → Enable Cloud SQL API → Create instance → Authorize networks → Copy connection string
+
+CONNECTION STRING FORMAT:
+--------------------------
+postgresql://[username]:[password]@[host]:[port]/[database]
+
+Examples:
+- Supabase: postgresql://postgres:password@db.abc123.supabase.co:5432/postgres
+- Neon: postgresql://user:password@ep-xxx.region.aws.neon.tech/neondb
+- Railway: postgresql://postgres:password@containers-us-west-xxx.railway.app:5432/railway
+
+For SSL (production): Add ?sslmode=require at the end
+
+SECURITY BEST PRACTICES:
+------------------------
+1. Store connection strings in .env file (NEVER commit to Git)
+2. Use SSL connections in production (?sslmode=require)
+3. Use strong passwords (16+ characters)
+4. Enable IP whitelisting where available
+5. Use different databases for dev/staging/prod
+
+TROUBLESHOOTING:
+----------------
+
+Connection Refused:
+- Check if database is running
+- Verify connection string is correct
+- Check firewall/security group settings
+- Ensure database allows public connections
+
+Authentication Failed:
+- Double-check username and password
+- Reset password in provider dashboard
+- Verify special characters are URL-encoded
+
+SSL Required:
+- Add ?sslmode=require to connection string
+
+Database Does Not Exist:
+- Create database in provider dashboard
+- Use default database (usually 'postgres')
+- Update connection string with correct database name
+
+QUICK CHECKLIST:
+----------------
+[ ] Choose provider (Supabase recommended)
+[ ] Create account and database
+[ ] Copy connection string
+[ ] Update backend/.env file
+[ ] Test connection
+[ ] Start application
+[ ] Verify tables created automatically
+
+For detailed instructions, see ONLINE_POSTGRESQL_SETUP.md
+
