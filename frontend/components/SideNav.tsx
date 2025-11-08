@@ -20,6 +20,7 @@ export default function SideNav({ activeSection, onSectionChange }: SideNavProps
     { id: 'chat', label: 'Neural Chat', icon: '💬' },
     { id: 'training', label: 'Training Hub', icon: '🧠' },
     { id: 'scraping', label: 'Web Scraper', icon: '🕷️' },
+    { id: 'plagiarism', label: 'Plagiarism Detection', icon: '🔍' },
     { id: 'analytics', label: 'Analytics', icon: '📊' },
     { id: 'dataset', label: 'Dataset', icon: '📁' },
     { id: 'models', label: 'Models', icon: '🔮' },

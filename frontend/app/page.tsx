@@ -1,8 +1,16 @@
 'use client';
 
-import Dashboard from '@/components/Dashboard';
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function Home() {
-  return <Dashboard />;
+  const router = useRouter();
+
+  useEffect(() => {
+    // Redirect directly to dashboard without authentication check
+    router.push('/dashboard');
+  }, [router]);
+
+  return null;
 }
 

@@ -1,0 +1,35 @@
+========================================
+QUICK FIX: LLM NOT WORKING
+========================================
+
+PROBLEM: Groq API key is invalid or expired
+
+SOLUTION (3 steps):
+
+1. GET NEW API KEY
+   - Go to: https://console.groq.com
+   - Sign in / Create account
+   - Go to "API Keys" section
+   - Click "Create API Key"
+   - Copy the key (starts with gsk_)
+
+2. UPDATE .env FILE
+   - Open: backend/.env
+   - Find: GROQ_API_KEY=...
+   - Replace with: GROQ_API_KEY=your_new_key_here
+   - Save the file
+
+3. RESTART SERVER
+   - Stop server (Ctrl+C)
+   - Run: cd backend && source venv/bin/activate && uvicorn app:app --reload --port 8000
+
+TEST:
+   - Run: cd backend && python3 test_groq_key.py
+   - Or test: curl -X POST http://localhost:8000/api/chat/ -H "Content-Type: application/json" -d '{"message": "Hello"}'
+
+========================================
+For detailed instructions, see: FIX_LLM_NOT_WORKING.md
+========================================
+
+
+

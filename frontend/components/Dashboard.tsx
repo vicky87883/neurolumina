@@ -5,6 +5,7 @@ import SideNav from './SideNav';
 import ChatWindow from './ChatWindow';
 import TrainingStatus from './TrainingStatus';
 import WebScraper from './WebScraper';
+import PlagiarismDetector from './PlagiarismDetector';
 import AnimatedBackground from './AnimatedBackground';
 import FloatingParticles from './FloatingParticles';
 import styles from './Dashboard.module.css';
@@ -53,6 +54,16 @@ export default function Dashboard() {
               <p>Extract content from websites and save to PostgreSQL database</p>
             </div>
             <WebScraper />
+          </div>
+        );
+      case 'plagiarism':
+        return (
+          <div className={styles.contentSection}>
+            <div className={styles.sectionHeader}>
+              <h2>Plagiarism Detection</h2>
+              <p>Check text for plagiarism against database content with high accuracy</p>
+            </div>
+            <PlagiarismDetector />
           </div>
         );
       case 'analytics':

@@ -141,3 +141,158 @@ export async function getScrapedContent(limit: number = 10, offset: number = 0):
   return response.json();
 }
 
+// Authentication API
+export interface SignUpRequest {
+  email: string;
+  username: string;
+  password: string;
+  full_name?: string;
+}
+
+export interface LoginRequest {
+  email: string;
+  password: string;
+}
+
+export interface AuthResponse {
+  access_token: string;
+  token_type: string;
+  user: {
+    id: number;
+    email: string;
+    username: string;
+    full_name?: string;
+  };
+}
+
+export async function signUp(request: SignUpRequest): Promise<AuthResponse> {
+  const response = await fetch(`${API_BASE_URL}/api/auth/signup`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(request),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    let errorMessage = errorData.detail || errorData.message || `Signup failed: ${response.statusText}`;
+    
+    // Provide user-friendly messages for specific error codes
+    if (response.status === 503) {
+      errorMessage = errorData.detail || 'Database service is currently unavailable. Please check your database connection or contact support.';
+    } else if (response.status === 400) {
+      errorMessage = errorData.detail || 'Invalid request. Please check your input and try again.';
+    } else if (response.status === 500) {
+      errorMessage = errorData.detail || 'Server error. Please try again later.';
+    }
+    
+    throw new Error(errorMessage);
+  }
+
+  return response.json();
+}
+
+export async function login(request: LoginRequest): Promise<AuthResponse> {
+  const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(request),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    let errorMessage = errorData.detail || errorData.message || `Login failed: ${response.statusText}`;
+    
+    // Provide user-friendly messages for specific error codes
+    if (response.status === 503) {
+      errorMessage = errorData.detail || 'Database service is currently unavailable. Please check your database connection or contact support.';
+    } else if (response.status === 401) {
+      errorMessage = errorData.detail || 'Incorrect email or password. Please try again.';
+    } else if (response.status === 500) {
+      errorMessage = errorData.detail || 'Server error. Please try again later.';
+    }
+    
+    throw new Error(errorMessage);
+  }
+
+  return response.json();
+}
+
+export async function getCurrentUser(token: string): Promise<any> {
+  const response = await fetch(`${API_BASE_URL}/api/auth/me`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to get user: ${response.statusText}`);
+  }
+
+  return response.json();
+}
+
+// Plagiarism Detection API
+export interface PlagiarismCheckRequest {
+  text: string;
+  min_similarity?: number;
+  use_chunks?: boolean;
+  max_results?: number;
+}
+
+export interface PlagiarismResult {
+  plagiarism_percentage: number;
+  is_plagiarized: boolean;
+  matches: Array<{
+    similarity: number;
+    similarity_percentage: number;
+    source_id: string;
+    source: string;
+    url?: string;
+    title?: string;
+    matching_text: string;
+    date?: string;
+  }>;
+  total_comparisons: number;
+  matches_found: number;
+  text_length: number;
+  min_similarity_threshold: number;
+}
+
+export async function checkPlagiarism(request: PlagiarismCheckRequest): Promise<PlagiarismResult> {
+  const response = await fetch(`${API_BASE_URL}/api/plagiarism/check`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(request),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.detail || `Plagiarism check failed: ${response.statusText}`);
+  }
+
+  return response.json();
+}
+
+export async function getPlagiarismStats(): Promise<any> {
+  const response = await fetch(`${API_BASE_URL}/api/plagiarism/stats`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to get stats: ${response.statusText}`);
+  }
+
+  return response.json();
+}
+

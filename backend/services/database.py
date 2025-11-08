@@ -16,7 +16,7 @@ class DatabaseManager:
     def __init__(self):
         self.database_url = os.getenv(
             "DATABASE_URL",
-            "postgresql://user:password@localhost:5432/llm_training"
+            "postgresql://postgres:Vikram9817642072@db.atrhbcbupdimmcbyfabc.supabase.co:5432/postgres"
         )
         self.async_database_url = os.getenv(
             "ASYNC_DATABASE_URL",
@@ -30,12 +30,17 @@ class DatabaseManager:
     def initialize(self):
         """Initialize database connections"""
         try:
+            # Validate database URL format
+            if not self.database_url or self.database_url == "postgresql://user:password@localhost:5432/llm_training":
+                logger.warning("Using default DATABASE_URL. Please set DATABASE_URL environment variable for production.")
+            
             # Synchronous engine
             self.engine = create_engine(
                 self.database_url,
                 pool_pre_ping=True,
                 pool_size=10,
-                max_overflow=20
+                max_overflow=20,
+                connect_args={"connect_timeout": 5}  # 5 second timeout
             )
             
             # Synchronous session
@@ -46,6 +51,10 @@ class DatabaseManager:
             )
             
             # Asynchronous engine
+            # Note: Supabase requires SSL connections
+            # For asyncpg with SQLAlchemy, SSL is typically handled automatically
+            # If needed, we can add ?sslmode=require to the connection URL
+            # For now, asyncpg will negotiate SSL if the server requires it
             self.async_engine = create_async_engine(
                 self.async_database_url,
                 pool_pre_ping=True,
@@ -64,7 +73,12 @@ class DatabaseManager:
             logger.info("Database connections initialized successfully")
             
         except Exception as e:
-            logger.error(f"Error initializing database: {str(e)}")
+            error_msg = str(e)
+            if "nodename nor servname provided" in error_msg or "not known" in error_msg:
+                logger.error(f"Database hostname resolution failed: {error_msg}")
+                logger.error("Please check your DATABASE_URL environment variable. Format: postgresql://user:password@host:port/database")
+            else:
+                logger.error(f"Error initializing database: {error_msg}")
             raise
     
     def get_sync_session(self):
@@ -82,6 +96,16 @@ class DatabaseManager:
     async def test_connection(self) -> Dict[str, Any]:
         """Test database connection"""
         try:
+            # Check if engine is initialized
+            if not self.async_engine:
+                try:
+                    self.initialize()
+                except Exception as init_error:
+                    return {
+                        "status": "error",
+                        "message": f"Database initialization failed: {str(init_error)}"
+                    }
+            
             async with self.get_async_session() as session:
                 result = await session.execute(text("SELECT version()"))
                 version = result.scalar()
@@ -97,10 +121,27 @@ class DatabaseManager:
                     "message": "Successfully connected to PostgreSQL"
                 }
         except Exception as e:
-            logger.error(f"Database connection test failed: {str(e)}")
+            error_msg = str(e)
+            logger.error(f"Database connection test failed: {error_msg}")
+            
+            # Provide more helpful error messages
+            if "nodename nor servname provided" in error_msg or "not known" in error_msg:
+                return {
+                    "status": "error",
+                    "message": "Database hostname could not be resolved. Please check your DATABASE_URL environment variable.",
+                    "error": error_msg
+                }
+            elif "connection refused" in error_msg.lower() or "could not connect" in error_msg.lower():
+                return {
+                    "status": "error",
+                    "message": "Database connection refused. Please ensure PostgreSQL is running and DATABASE_URL is correct.",
+                    "error": error_msg
+                }
+            else:
             return {
                 "status": "error",
-                "message": f"Connection failed: {str(e)}"
+                    "message": f"Connection failed: {error_msg}",
+                    "error": error_msg
             }
     
     async def execute_query(self, query: str, params: Optional[Dict[str, Any]] = None) -> Any:
@@ -143,6 +184,20 @@ class DatabaseManager:
             Column('content', Text),
             Column('metadata', Text),  # JSON string
             Column('scraped_at', DateTime, default=datetime.utcnow),
+        )
+        
+        # Users table for authentication
+        users = Table(
+            'users',
+            metadata,
+            Column('id', Integer, primary_key=True),
+            Column('email', String(255), unique=True, nullable=False),
+            Column('username', String(100), unique=True, nullable=False),
+            Column('hashed_password', String(255), nullable=False),
+            Column('full_name', String(255)),
+            Column('is_active', Integer, default=1),  # 1 = active, 0 = inactive
+            Column('created_at', DateTime, default=datetime.utcnow),
+            Column('updated_at', DateTime, default=datetime.utcnow, onupdate=datetime.utcnow),
         )
         
         try:

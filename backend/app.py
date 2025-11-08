@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import logging
-from routes import chat, training, scraping
+from routes import chat, training, scraping, plagiarism, auth
 from services.database import db_manager
 
 logging.basicConfig(level=logging.INFO)
@@ -11,7 +11,12 @@ app = FastAPI(title="LLM Training API", version="1.0.0")
 # CORS middleware for frontend communication
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],  # Next.js default port
+    allow_origins=[
+        "http://localhost:3000", 
+        "http://127.0.0.1:3000",
+        "https://intellithesis.com",
+        "http://intellithesis.com"
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -21,6 +26,8 @@ app.add_middleware(
 app.include_router(chat.router, prefix="/api/chat", tags=["chat"])
 app.include_router(training.router, prefix="/api/training", tags=["training"])
 app.include_router(scraping.router, prefix="/api/scraping", tags=["scraping"])
+app.include_router(plagiarism.router, prefix="/api/plagiarism", tags=["plagiarism"])
+app.include_router(auth.router, prefix="/api/auth", tags=["auth"])
 
 logger = logging.getLogger(__name__)
 
