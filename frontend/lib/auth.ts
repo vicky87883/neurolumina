@@ -61,5 +61,36 @@ export function logout(): void {
   }
 }
 
+export function validateToken(): boolean {
+  const token = getAuthToken();
+  if (!token) {
+    return false;
+  }
+  
+  try {
+    // Basic token validation - check if it's a JWT
+    const parts = token.split('.');
+    if (parts.length !== 3) {
+      return false;
+    }
+    
+    // Decode payload to check expiration
+    const payload = JSON.parse(atob(parts[1]));
+    const exp = payload.exp;
+    
+    if (exp && Date.now() >= exp * 1000) {
+      // Token expired
+      removeAuthToken();
+      return false;
+    }
+    
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+
+
 
 

@@ -66,11 +66,11 @@ async def signup(request: SignUpRequest):
                 detail="Username must be at least 3 characters"
             )
         
-        # Validate password
-        if len(request.password) < 6:
+        # Validate password (additional validation in create_user)
+        if len(request.password) < 8:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Password must be at least 6 characters"
+                detail="Password must be at least 8 characters"
             )
         
         # Create user
@@ -167,6 +167,8 @@ async def verify_token(current_user: dict = Depends(get_current_user)):
         "valid": True,
         "user": current_user
     }
+
+
 
 
 

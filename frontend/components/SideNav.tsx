@@ -1,6 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { getUserData, logout } from '@/lib/auth';
 import styles from './SideNav.module.css';
 
 interface SideNavProps {
@@ -9,12 +11,23 @@ interface SideNavProps {
 }
 
 export default function SideNav({ activeSection, onSectionChange }: SideNavProps) {
+  const router = useRouter();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [user, setUser] = useState<any>(null);
 
   useEffect(() => {
     setMounted(true);
+    const userData = getUserData();
+    if (userData) {
+      setUser(userData);
+    }
   }, []);
+
+  const handleLogout = () => {
+    logout();
+    router.push('/');
+  };
 
   const menuItems = [
     { id: 'chat', label: 'Neural Chat', icon: '💬' },
@@ -34,7 +47,7 @@ export default function SideNav({ activeSection, onSectionChange }: SideNavProps
             <>
               <div className={styles.logoIcon}>🧠</div>
               <div className={styles.logoText}>
-                <div className={styles.logoTitle}>NeuroLumina</div>
+                <div className={styles.logoTitle}>IntelliThesis</div>
                 <div className={styles.logoSubtitle}>AI Platform</div>
               </div>
             </>
@@ -67,8 +80,21 @@ export default function SideNav({ activeSection, onSectionChange }: SideNavProps
       </ul>
 
       <div className={styles.navFooter}>
+        {!isCollapsed && user && (
+          <div className={styles.userInfo}>
+            <div className={styles.userName}>{user.username || user.email}</div>
+            <div className={styles.userEmail}>{user.email}</div>
+          </div>
+        )}
+        <button 
+          className={styles.logoutButton}
+          onClick={handleLogout}
+          title="Logout"
+        >
+          {!isCollapsed ? '🚪 Logout' : '🚪'}
+        </button>
         {!isCollapsed && (
-          <div className={styles.version}>v1.0.0 • Neural Net</div>
+          <div className={styles.version}>v1.0.0 • IntelliThesis</div>
         )}
       </div>
     </nav>

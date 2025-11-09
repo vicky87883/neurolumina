@@ -1,8 +1,8 @@
 import os
-import jwt
 import logging
 from datetime import datetime, timedelta
 from typing import Optional, Dict, Any
+from jose import jwt
 from passlib.context import CryptContext
 from fastapi import HTTPException, status
 from services.database import db_manager
@@ -14,13 +14,43 @@ logger = logging.getLogger(__name__)
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 # JWT settings
-SECRET_KEY = os.getenv("JWT_SECRET_KEY", "your-secret-key-change-this-in-production")
+SECRET_KEY = os.getenv("JWT_SECRET_KEY", "your-secret-key-change-this-in-production-change-in-production-please")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24 * 7  # 7 days
+
+# Security settings
+MIN_PASSWORD_LENGTH = 8
+MAX_PASSWORD_LENGTH = 72
+PASSWORD_REQUIRE_UPPERCASE = False  # Set to True for stronger passwords
+PASSWORD_REQUIRE_LOWERCASE = True
+PASSWORD_REQUIRE_NUMBER = False  # Set to True for stronger passwords
+PASSWORD_REQUIRE_SPECIAL = False  # Set to True for stronger passwords
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     """Verify a password against a hash"""
     return pwd_context.verify(plain_password, hashed_password)
+
+def validate_password_strength(password: str) -> tuple:
+    """Validate password strength"""
+    if len(password) < MIN_PASSWORD_LENGTH:
+        return False, f"Password must be at least {MIN_PASSWORD_LENGTH} characters long"
+    
+    if len(password) > MAX_PASSWORD_LENGTH:
+        return False, f"Password must be at most {MAX_PASSWORD_LENGTH} characters long"
+    
+    if PASSWORD_REQUIRE_LOWERCASE and not any(c.islower() for c in password):
+        return False, "Password must contain at least one lowercase letter"
+    
+    if PASSWORD_REQUIRE_UPPERCASE and not any(c.isupper() for c in password):
+        return False, "Password must contain at least one uppercase letter"
+    
+    if PASSWORD_REQUIRE_NUMBER and not any(c.isdigit() for c in password):
+        return False, "Password must contain at least one number"
+    
+    if PASSWORD_REQUIRE_SPECIAL and not any(c in "!@#$%^&*()_+-=[]{}|;:,.<>?" for c in password):
+        return False, "Password must contain at least one special character"
+    
+    return True, ""
 
 def get_password_hash(password: str) -> str:
     """Hash a password"""
@@ -139,6 +169,14 @@ async def create_user(
 ) -> Dict[str, Any]:
     """Create a new user"""
     try:
+        # Validate password strength
+        is_valid, error_message = validate_password_strength(password)
+        if not is_valid:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=error_message
+            )
+        
         # Validate password length (bcrypt limit is 72 bytes)
         password_bytes = password.encode('utf-8')
         if len(password_bytes) > 72:

@@ -219,6 +219,63 @@
 .navFooter {
   padding: 20px;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.userInfo {
+  padding: 12px;
+  background: rgba(104, 59, 242, 0.1);
+  border-radius: 8px;
+  border: 1px solid rgba(104, 59, 242, 0.2);
+}
+
+.userName {
+  font-size: 14px;
+  font-weight: 600;
+  color: white;
+  margin-bottom: 4px;
+}
+
+.userEmail {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.7);
+  word-break: break-all;
+}
+
+.logoutButton {
+  width: 100%;
+  padding: 10px 16px;
+  background: rgba(239, 68, 68, 0.2);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.logoutButton:hover {
+  background: rgba(239, 68, 68, 0.3);
+  border-color: rgba(239, 68, 68, 0.5);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+.sideNav.collapsed .userInfo,
+.sideNav.collapsed .version {
+  display: none;
+}
+
+.sideNav.collapsed .logoutButton {
+  padding: 10px;
+  font-size: 20px;
 }
 
 .version {

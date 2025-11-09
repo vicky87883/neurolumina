@@ -1,5 +1,17 @@
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
+// Get auth token for authenticated requests
+function getAuthHeaders(): HeadersInit {
+  const token = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null;
+  const headers: HeadersInit = {
+    'Content-Type': 'application/json',
+  };
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+  return headers;
+}
+
 export interface ChatRequest {
   message: string;
   temperature?: number;
@@ -29,9 +41,7 @@ export async function sendChatMessage(request: ChatRequest): Promise<ChatRespons
   try {
     const response = await fetch(`${API_BASE_URL}/api/chat/`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: getAuthHeaders(),
       body: JSON.stringify(request),
     });
 
@@ -53,9 +63,7 @@ export async function sendChatMessage(request: ChatRequest): Promise<ChatRespons
 export async function getTrainingStatus(): Promise<TrainingStatus> {
   const response = await fetch(`${API_BASE_URL}/api/training/status`, {
     method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-    },
+    headers: getAuthHeaders(),
   });
 
   if (!response.ok) {
@@ -68,9 +76,7 @@ export async function getTrainingStatus(): Promise<TrainingStatus> {
 export async function startTraining(numSteps: number = 100, batchSize: number = 32): Promise<any> {
   const response = await fetch(`${API_BASE_URL}/api/training/start`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
+    headers: getAuthHeaders(),
     body: JSON.stringify({ num_steps: numSteps, batch_size: batchSize }),
   });
 
@@ -89,9 +95,7 @@ export async function addTrainingExample(
 ): Promise<any> {
   const responseData = await fetch(`${API_BASE_URL}/api/training/example`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
+    headers: getAuthHeaders(),
     body: JSON.stringify({ prompt, response, reward, metadata }),
   });
 
@@ -112,9 +116,7 @@ export interface ScrapeRequest {
 export async function scrapeUrl(request: ScrapeRequest): Promise<any> {
   const response = await fetch(`${API_BASE_URL}/api/scraping/single`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
+    headers: getAuthHeaders(),
     body: JSON.stringify(request),
   });
 
@@ -129,9 +131,7 @@ export async function scrapeUrl(request: ScrapeRequest): Promise<any> {
 export async function getScrapedContent(limit: number = 10, offset: number = 0): Promise<any> {
   const response = await fetch(`${API_BASE_URL}/api/scraping/from-db?limit=${limit}&offset=${offset}`, {
     method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-    },
+    headers: getAuthHeaders(),
   });
 
   if (!response.ok) {
@@ -267,9 +267,7 @@ export interface PlagiarismResult {
 export async function checkPlagiarism(request: PlagiarismCheckRequest): Promise<PlagiarismResult> {
   const response = await fetch(`${API_BASE_URL}/api/plagiarism/check`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
+    headers: getAuthHeaders(),
     body: JSON.stringify(request),
   });
 
@@ -284,9 +282,7 @@ export async function checkPlagiarism(request: PlagiarismCheckRequest): Promise<
 export async function getPlagiarismStats(): Promise<any> {
   const response = await fetch(`${API_BASE_URL}/api/plagiarism/stats`, {
     method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-    },
+    headers: getAuthHeaders(),
   });
 
   if (!response.ok) {

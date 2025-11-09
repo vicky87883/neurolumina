@@ -18,10 +18,13 @@ class DatabaseManager:
             "DATABASE_URL",
             "postgresql://postgres:Vikram9817642072@db.atrhbcbupdimmcbyfabc.supabase.co:5432/postgres"
         )
-        self.async_database_url = os.getenv(
-            "ASYNC_DATABASE_URL",
-            self.database_url.replace("postgresql://", "postgresql+asyncpg://")
-        )
+        # Store original URL for sync engine (psycopg2 handles sslmode in URL)
+        # For asyncpg, remove query parameters (SSL handled via connect_args)
+        async_url = self.database_url.replace("postgresql://", "postgresql+asyncpg://")
+        # Remove query parameters for asyncpg
+        if "?" in async_url:
+            async_url = async_url.split("?")[0]
+        self.async_database_url = os.getenv("ASYNC_DATABASE_URL", async_url)
         self.engine = None
         self.async_engine = None
         self.SessionLocal = None
@@ -51,16 +54,24 @@ class DatabaseManager:
             )
             
             # Asynchronous engine
-            # Note: Supabase requires SSL connections
-            # For asyncpg with SQLAlchemy, SSL is typically handled automatically
-            # If needed, we can add ?sslmode=require to the connection URL
-            # For now, asyncpg will negotiate SSL if the server requires it
+            # For Neon and Supabase, SSL is required
+            # asyncpg needs SSL configured via connect_args, not URL parameters
+            import ssl
+            connect_args = {}
+            
+            # Check if URL contains sslmode=require or if it's a Neon/Supabase URL
+            if "neon.tech" in self.async_database_url or "supabase.co" in self.async_database_url or "sslmode=require" in self.database_url:
+                # Create SSL context for secure connection
+                ssl_context = ssl.create_default_context()
+                connect_args["ssl"] = ssl_context
+            
             self.async_engine = create_async_engine(
                 self.async_database_url,
                 pool_pre_ping=True,
                 pool_size=10,
                 max_overflow=20,
-                echo=False
+                echo=False,
+                connect_args=connect_args if connect_args else {}
             )
             
             # Asynchronous session
@@ -138,7 +149,7 @@ class DatabaseManager:
                     "error": error_msg
                 }
             else:
-            return {
+                return {
                 "status": "error",
                     "message": f"Connection failed: {error_msg}",
                     "error": error_msg
