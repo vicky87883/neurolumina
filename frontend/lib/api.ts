@@ -292,3 +292,151 @@ export async function getPlagiarismStats(): Promise<any> {
   return response.json();
 }
 
+// Blog API functions
+export interface Blog {
+  id: number;
+  title: string;
+  content: string;
+  excerpt?: string;
+  tags?: string[];
+  category?: string;
+  is_published: boolean;
+  author_id: number;
+  author_username?: string;
+  author_email?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface BlogCreate {
+  title: string;
+  content: string;
+  excerpt?: string;
+  tags?: string[];
+  category?: string;
+  is_published?: boolean;
+}
+
+export interface BlogUpdate {
+  title?: string;
+  content?: string;
+  excerpt?: string;
+  tags?: string[];
+  category?: string;
+  is_published?: boolean;
+}
+
+export async function getBlogs(
+  skip: number = 0,
+  limit: number = 20,
+  publishedOnly: boolean = true,
+  category?: string
+): Promise<Blog[]> {
+  try {
+    const params = new URLSearchParams({
+      skip: skip.toString(),
+      limit: limit.toString(),
+      published_only: publishedOnly.toString(),
+    });
+    if (category) {
+      params.append('category', category);
+    }
+
+    const response = await fetch(`${API_BASE_URL}/api/blogs/?${params}`, {
+      method: 'GET',
+      headers: getAuthHeaders(),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      const errorMessage = errorData.detail || errorData.message || response.statusText;
+      throw new Error(errorMessage);
+    }
+
+    return await response.json();
+  } catch (error: any) {
+    console.error('Error fetching blogs:', error);
+    throw new Error(error.message || 'Failed to fetch blogs');
+  }
+}
+
+export async function getBlog(blogId: number): Promise<Blog> {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/blogs/${blogId}`, {
+      method: 'GET',
+      headers: getAuthHeaders(),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      const errorMessage = errorData.detail || errorData.message || response.statusText;
+      throw new Error(errorMessage);
+    }
+
+    return await response.json();
+  } catch (error: any) {
+    console.error('Error fetching blog:', error);
+    throw new Error(error.message || 'Failed to fetch blog');
+  }
+}
+
+export async function createBlog(blog: BlogCreate): Promise<Blog> {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/blogs/`, {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify(blog),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      const errorMessage = errorData.detail || errorData.message || response.statusText;
+      throw new Error(errorMessage);
+    }
+
+    return await response.json();
+  } catch (error: any) {
+    console.error('Error creating blog:', error);
+    throw new Error(error.message || 'Failed to create blog');
+  }
+}
+
+export async function updateBlog(blogId: number, blog: BlogUpdate): Promise<Blog> {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/blogs/${blogId}`, {
+      method: 'PUT',
+      headers: getAuthHeaders(),
+      body: JSON.stringify(blog),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      const errorMessage = errorData.detail || errorData.message || response.statusText;
+      throw new Error(errorMessage);
+    }
+
+    return await response.json();
+  } catch (error: any) {
+    console.error('Error updating blog:', error);
+    throw new Error(error.message || 'Failed to update blog');
+  }
+}
+
+export async function deleteBlog(blogId: number): Promise<void> {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/blogs/${blogId}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders(),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      const errorMessage = errorData.detail || errorData.message || response.statusText;
+      throw new Error(errorMessage);
+    }
+  } catch (error: any) {
+    console.error('Error deleting blog:', error);
+    throw new Error(error.message || 'Failed to delete blog');
+  }
+}
+

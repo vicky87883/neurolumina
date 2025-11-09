@@ -318,6 +318,132 @@
   z-index: 2;
 }
 
+/* Research Papers Animation */
+.researchPapers {
+  position: absolute;
+  top: -50px;
+  right: -100px;
+  width: 400px;
+  height: 500px;
+  z-index: 1;
+  pointer-events: none;
+}
+
+@media (max-width: 1024px) {
+  .researchPapers {
+    display: none;
+  }
+}
+
+.paper {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  animation: paperFloat 6s ease-in-out infinite;
+  width: 280px;
+  transform-origin: center;
+}
+
+.paper1 {
+  top: 0;
+  left: 0;
+  animation: paperFloat1 6s ease-in-out infinite;
+  z-index: 3;
+}
+
+.paper2 {
+  top: 60px;
+  left: 40px;
+  animation: paperFloat2 6s ease-in-out infinite;
+  animation-delay: 2s;
+  z-index: 2;
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.paper3 {
+  top: 120px;
+  left: 80px;
+  animation: paperFloat3 6s ease-in-out infinite;
+  animation-delay: 4s;
+  z-index: 1;
+  background: rgba(255, 255, 255, 0.85);
+}
+
+@keyframes paperFloat1 {
+  0%, 100% {
+    transform: translateY(0) rotate(-5deg);
+  }
+  50% {
+    transform: translateY(-20px) rotate(-3deg);
+  }
+}
+
+@keyframes paperFloat2 {
+  0%, 100% {
+    transform: translateY(0) rotate(3deg);
+  }
+  50% {
+    transform: translateY(-20px) rotate(5deg);
+  }
+}
+
+@keyframes paperFloat3 {
+  0%, 100% {
+    transform: translateY(0) rotate(-2deg);
+  }
+  50% {
+    transform: translateY(-20px) rotate(0deg);
+  }
+}
+
+.paperHeader {
+  border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+  padding-bottom: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.paperTitle {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 0.5rem;
+  font-family: 'Georgia', serif;
+}
+
+.paperLines {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.paperLine {
+  height: 2px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 1px;
+  flex: 1;
+}
+
+.paperContent {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.paperText {
+  font-size: 0.75rem;
+  color: rgba(0, 0, 0, 0.7);
+  line-height: 1.6;
+  font-family: 'Times New Roman', serif;
+}
+
+.paperText::before {
+  content: '• ';
+  color: rgba(0, 0, 0, 0.4);
+  margin-right: 0.5rem;
+}
+
 .visualCard {
   background: rgba(255, 255, 255, 0.03);
   backdrop-filter: blur(20px);
@@ -442,6 +568,96 @@
   font-size: 0.875rem;
   color: rgba(255, 255, 255, 0.9);
   font-weight: 500;
+}
+
+/* Trusted By Section */
+.trustedBySection {
+  padding: 80px 2rem;
+  background: #0a0a0a;
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.trustedByHeader {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.trustedByLabel {
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  font-weight: 600;
+}
+
+.trustedBySlider {
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 10%,
+    black 90%,
+    transparent
+  );
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 10%,
+    black 90%,
+    transparent
+  );
+}
+
+.sliderTrack {
+  display: flex;
+  animation: scroll 40s linear infinite;
+  will-change: transform;
+}
+
+.sliderContent {
+  display: flex;
+  gap: 3rem;
+  align-items: center;
+  padding: 0 2rem;
+  flex-shrink: 0;
+}
+
+.universityLogo {
+  flex-shrink: 0;
+  padding: 1rem 2rem;
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.universityLogo:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(99, 102, 241, 0.5);
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(99, 102, 241, 0.2);
+}
+
+.universityLogo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 120px;
+}
+
+@keyframes scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
 }
 
 /* Features Section */
@@ -1001,6 +1217,28 @@
 
   .footerContent {
     grid-template-columns: 1fr;
+  }
+
+  .trustedBySection {
+    padding: 60px 1rem;
+  }
+
+  .trustedByLabel {
+    font-size: 0.75rem;
+  }
+
+  .universityLogo {
+    min-width: 100px;
+    padding: 0.5rem 1rem;
+  }
+
+  .sliderContent {
+    gap: 2rem;
+    padding: 0 1rem;
+  }
+
+  .heroVisual {
+    margin-top: 2rem;
   }
 }
 

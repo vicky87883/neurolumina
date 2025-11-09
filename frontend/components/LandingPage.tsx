@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { isAuthenticated, validateToken } from '@/lib/auth';
+import UniversityLogo from '@/components/UniversityLogo';
 import styles from '@/styles/LandingPage.module.css';
 
 export default function LandingPage() {
@@ -11,6 +12,7 @@ export default function LandingPage() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [isSliderPaused, setIsSliderPaused] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
@@ -133,6 +135,51 @@ export default function LandingPage() {
             </div>
           </div>
           <div className={styles.heroVisual}>
+            <div className={styles.researchPapers}>
+              <div className={`${styles.paper} ${styles.paper1}`}>
+                <div className={styles.paperHeader}>
+                  <div className={styles.paperTitle}>Research Paper</div>
+                  <div className={styles.paperLines}>
+                    <div className={styles.paperLine}></div>
+                    <div className={styles.paperLine}></div>
+                    <div className={styles.paperLine}></div>
+                  </div>
+                </div>
+                <div className={styles.paperContent}>
+                  <div className={styles.paperText}>Abstract: Machine Learning...</div>
+                  <div className={styles.paperText}>Methodology: Deep Neural...</div>
+                  <div className={styles.paperText}>Results: 99.9% accuracy...</div>
+                </div>
+              </div>
+              <div className={`${styles.paper} ${styles.paper2}`}>
+                <div className={styles.paperHeader}>
+                  <div className={styles.paperTitle}>Thesis Document</div>
+                  <div className={styles.paperLines}>
+                    <div className={styles.paperLine}></div>
+                    <div className={styles.paperLine}></div>
+                  </div>
+                </div>
+                <div className={styles.paperContent}>
+                  <div className={styles.paperText}>Chapter 1: Introduction...</div>
+                  <div className={styles.paperText}>Chapter 2: Literature Review...</div>
+                </div>
+              </div>
+              <div className={`${styles.paper} ${styles.paper3}`}>
+                <div className={styles.paperHeader}>
+                  <div className={styles.paperTitle}>Research Data</div>
+                  <div className={styles.paperLines}>
+                    <div className={styles.paperLine}></div>
+                    <div className={styles.paperLine}></div>
+                    <div className={styles.paperLine}></div>
+                    <div className={styles.paperLine}></div>
+                  </div>
+                </div>
+                <div className={styles.paperContent}>
+                  <div className={styles.paperText}>Dataset: 10K samples...</div>
+                  <div className={styles.paperText}>Analysis: Statistical...</div>
+                </div>
+              </div>
+            </div>
             <div className={styles.visualCard}>
               <div className={styles.cardHeader}>
                 <div className={styles.cardDots}>
@@ -170,6 +217,78 @@ export default function LandingPage() {
               <div className={`${styles.floatingElement} ${styles.element3}`}>
                 <div className={styles.elementIcon}>🤖</div>
                 <div className={styles.elementText}>AI Training</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Trusted By Section */}
+      <section className={styles.trustedBySection}>
+        <div className={styles.sectionContainer}>
+          <div className={styles.trustedByHeader}>
+            <p className={styles.trustedByLabel}>Trusted by researchers at</p>
+          </div>
+          <div 
+            className={styles.trustedBySlider}
+            onMouseEnter={() => setIsSliderPaused(true)}
+            onMouseLeave={() => setIsSliderPaused(false)}
+          >
+            <div 
+              className={styles.sliderTrack}
+              style={{ animationPlayState: isSliderPaused ? 'paused' : 'running' }}
+            >
+              <div className={styles.sliderContent}>
+                {/* First set of logos */}
+                <div className={styles.universityLogo}>
+                  <UniversityLogo name="MIT" />
+                </div>
+                <div className={styles.universityLogo}>
+                  <UniversityLogo name="Cambridge" />
+                </div>
+                <div className={styles.universityLogo}>
+                  <UniversityLogo name="Stanford" />
+                </div>
+                <div className={styles.universityLogo}>
+                  <UniversityLogo name="Harvard" />
+                </div>
+                <div className={styles.universityLogo}>
+                  <UniversityLogo name="Oxford" />
+                </div>
+                <div className={styles.universityLogo}>
+                  <UniversityLogo name="ETH Zurich" />
+                </div>
+                <div className={styles.universityLogo}>
+                  <UniversityLogo name="Caltech" />
+                </div>
+                <div className={styles.universityLogo}>
+                  <UniversityLogo name="Princeton" />
+                </div>
+                {/* Duplicate set for infinite scroll */}
+                <div className={styles.universityLogo}>
+                  <UniversityLogo name="MIT" />
+                </div>
+                <div className={styles.universityLogo}>
+                  <UniversityLogo name="Cambridge" />
+                </div>
+                <div className={styles.universityLogo}>
+                  <UniversityLogo name="Stanford" />
+                </div>
+                <div className={styles.universityLogo}>
+                  <UniversityLogo name="Harvard" />
+                </div>
+                <div className={styles.universityLogo}>
+                  <UniversityLogo name="Oxford" />
+                </div>
+                <div className={styles.universityLogo}>
+                  <UniversityLogo name="ETH Zurich" />
+                </div>
+                <div className={styles.universityLogo}>
+                  <UniversityLogo name="Caltech" />
+                </div>
+                <div className={styles.universityLogo}>
+                  <UniversityLogo name="Princeton" />
+                </div>
               </div>
             </div>
           </div>

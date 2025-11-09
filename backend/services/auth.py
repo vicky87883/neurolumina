@@ -274,4 +274,47 @@ async def authenticate_user(email: str, password: str) -> Optional[Dict[str, Any
     user.pop("hashed_password", None)
     return user
 
+async def get_current_user(token: str) -> Dict[str, Any]:
+    """Get current authenticated user from token"""
+    try:
+        payload = decode_access_token(token)
+        user_id = payload.get("sub")
+        if user_id is None:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid authentication credentials"
+            )
+        
+        # Get user details from database
+        async with db_manager.get_async_session() as session:
+            query = text("""
+                SELECT id, email, username, full_name, is_active
+                FROM users
+                WHERE id = :user_id
+            """)
+            result = await session.execute(query, {"user_id": int(user_id)})
+            row = result.fetchone()
+            
+            if not row:
+                raise HTTPException(
+                    status_code=status.HTTP_401_UNAUTHORIZED,
+                    detail="User not found"
+                )
+            
+            return {
+                "id": row[0],
+                "email": row[1],
+                "username": row[2],
+                "full_name": row[3],
+                "is_active": row[4]
+            }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error getting current user: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid authentication credentials"
+        )
+
 
