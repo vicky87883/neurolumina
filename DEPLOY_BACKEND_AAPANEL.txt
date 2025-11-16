@@ -1,0 +1,182 @@
+===========================================
+BACKEND DEPLOYMENT GUIDE - AAPANEL AWS
+===========================================
+
+This guide will help you deploy the FastAPI backend on aaPanel (AWS) via Git.
+
+STEP 1: PREPARE YOUR GIT REPOSITORY
+------------------------------------
+1. Make sure your backend code is pushed to GitHub/GitLab/Bitbucket
+2. Note your repository URL (e.g., https://github.com/username/repo.git)
+3. Ensure you have access credentials (SSH key or HTTPS with username/password)
+
+
+STEP 2: SETUP AAPANEL
+----------------------
+1. Login to your aaPanel dashboard
+2. Go to "Website" -> "Python Project"
+3. Click "Add Python Project"
+
+
+STEP 3: CONFIGURE PYTHON PROJECT
+---------------------------------
+1. Project Name: Enter a name (e.g., "intellithesis-backend")
+2. Project Path: /www/wwwroot/your-project-name (default or custom)
+3. Python Version: Select Python 3.9 or higher (recommended: 3.10+)
+4. Framework: Select "FastAPI" or "Other"
+5. Port: Set to 8000 (or your preferred port)
+6. Click "Submit"
+
+
+STEP 4: DEPLOY FROM GIT
+------------------------
+1. In your Python project settings, find "Git" or "Source Code" section
+2. Click "Pull from Git"
+3. Enter your repository URL
+4. Select branch: "main" (or your default branch)
+5. Enter credentials if using HTTPS:
+   - Username: your-git-username
+   - Password: your-git-token/password
+6. Or use SSH key if configured
+7. Click "Pull" or "Deploy"
+
+
+STEP 5: INSTALL DEPENDENCIES
+-----------------------------
+1. Open "Terminal" in aaPanel or SSH into your server
+2. Navigate to your project directory:
+   cd /www/wwwroot/your-project-name/backend
+3. Create virtual environment (if not auto-created):
+   python3 -m venv venv
+4. Activate virtual environment:
+   source venv/bin/activate
+5. Install dependencies:
+   pip install -r requirements.txt
+   (Note: This may take time for packages like torch)
+
+
+STEP 6: CONFIGURE ENVIRONMENT VARIABLES
+----------------------------------------
+1. In aaPanel, go to your Python project settings
+2. Find "Environment Variables" or ".env" section
+3. Add required environment variables:
+   - DATABASE_URL=your_postgresql_connection_string
+   - GROQ_API_KEY=your_groq_api_key
+   - SECRET_KEY=your_secret_key_for_jwt
+   - Any other environment variables your app needs
+4. Save the configuration
+
+
+STEP 7: CONFIGURE STARTUP COMMAND
+----------------------------------
+1. In Python project settings, find "Startup Command" or "Run Command"
+2. Set the command to:
+   uvicorn app:app --host 0.0.0.0 --port 8000
+3. Or if using project manager:
+   cd /www/wwwroot/your-project-name/backend && source venv/bin/activate && uvicorn app:app --host 0.0.0.0 --port 8000
+
+
+STEP 8: START THE APPLICATION
+-----------------------------
+1. In aaPanel, find "Start" or "Restart" button for your Python project
+2. Click to start the application
+3. Check logs for any errors:
+   - Go to "Logs" section in your project
+   - Look for startup messages and errors
+
+
+STEP 9: CONFIGURE REVERSE PROXY (OPTIONAL)
+-------------------------------------------
+If you want to use a domain name:
+1. Go to "Website" -> "Add Site"
+2. Enter your domain name
+3. In site settings, go to "Reverse Proxy"
+4. Add proxy:
+   - Proxy Name: api
+   - Target URL: http://127.0.0.1:8000
+   - Send Domain: Yes
+5. Save and restart
+
+
+STEP 10: FIREWALL CONFIGURATION
+--------------------------------
+1. In aaPanel, go to "Security" -> "Firewall"
+2. Ensure port 8000 is open (or your configured port)
+3. If using reverse proxy, ensure ports 80/443 are open
+
+
+STEP 11: VERIFY DEPLOYMENT
+---------------------------
+1. Test the API endpoint:
+   curl http://your-server-ip:8000/health
+   or
+   curl http://your-domain.com/api/health
+2. Check response: {"status": "healthy"}
+3. Test root endpoint:
+   curl http://your-server-ip:8000/
+
+
+TROUBLESHOOTING
+---------------
+1. If app fails to start:
+   - Check logs in aaPanel
+   - Verify Python version matches requirements
+   - Ensure all dependencies are installed
+   - Check if port 8000 is available
+
+2. If dependencies fail to install:
+   - Try: pip install --upgrade pip
+   - For torch: pip install torch --index-url https://download.pytorch.org/whl/cpu
+   - Check Python version compatibility
+
+3. If database connection fails:
+   - Verify DATABASE_URL is correct
+   - Check if PostgreSQL is running
+   - Ensure firewall allows database connections
+
+4. If Git pull fails:
+   - Verify repository URL is correct
+   - Check credentials/permissions
+   - Try SSH key instead of HTTPS
+
+5. Common issues:
+   - Permission errors: chmod +x scripts, check file ownership
+   - Port already in use: Change port in startup command
+   - Module not found: Activate venv before running
+
+
+AUTOMATIC DEPLOYMENT (OPTIONAL)
+--------------------------------
+To enable auto-deploy on git push:
+1. In aaPanel, find "Webhook" or "Auto Deploy" settings
+2. Configure webhook URL from your git provider
+3. Set deployment script:
+   cd /www/wwwroot/your-project-name/backend
+   git pull origin main
+   source venv/bin/activate
+   pip install -r requirements.txt
+   # Restart service (command depends on your setup)
+
+
+NOTES
+-----
+- Keep your .env file secure and never commit it to git
+- Regularly update dependencies for security
+- Monitor logs for errors
+- Set up SSL certificate for production (Let's Encrypt in aaPanel)
+- Consider using process manager like PM2 or Supervisor for better reliability
+- Backup your database regularly
+
+
+SUPPORT
+-------
+For aaPanel specific issues, check:
+- aaPanel documentation
+- aaPanel forum
+- Your hosting provider's support
+
+For application issues, check:
+- Application logs in aaPanel
+- Python error messages
+- Database connection logs
+

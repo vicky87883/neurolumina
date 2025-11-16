@@ -207,6 +207,7 @@ class DatabaseManager:
             Column('hashed_password', String(255), nullable=False),
             Column('full_name', String(255)),
             Column('is_active', Integer, default=1),  # 1 = active, 0 = inactive
+            Column('is_admin', Integer, default=0),  # 1 = admin, 0 = regular user
             Column('created_at', DateTime, default=datetime.utcnow),
             Column('updated_at', DateTime, default=datetime.utcnow, onupdate=datetime.utcnow),
         )
@@ -214,6 +215,29 @@ class DatabaseManager:
         try:
             async with self.async_engine.begin() as conn:
                 await conn.run_sync(metadata.create_all)
+            
+            # Add is_admin column if it doesn't exist (migration)
+            try:
+                async with self.get_async_session() as session:
+                    # Check if is_admin column exists
+                    check_column_query = text("""
+                        SELECT column_name 
+                        FROM information_schema.columns 
+                        WHERE table_name='users' AND column_name='is_admin'
+                    """)
+                    result = await session.execute(check_column_query)
+                    if not result.fetchone():
+                        # Add is_admin column
+                        add_column_query = text("""
+                            ALTER TABLE users 
+                            ADD COLUMN is_admin INTEGER DEFAULT 0
+                        """)
+                        await session.execute(add_column_query)
+                        await session.commit()
+                        logger.info("Added is_admin column to users table")
+            except Exception as e:
+                logger.warning(f"Migration check failed (column may already exist): {str(e)}")
+            
             logger.info("Database tables created successfully")
             return {"status": "success", "message": "Tables created"}
         except Exception as e:

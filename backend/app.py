@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from fastapi.responses import Response
 import logging
-from routes import chat, training, scraping, plagiarism, auth, blogs
+from routes import chat, training, scraping, plagiarism, auth, blogs, careers, admin
 from services.database import db_manager
 
 logging.basicConfig(level=logging.INFO)
@@ -45,6 +45,8 @@ app.include_router(scraping.router, prefix="/api/scraping", tags=["scraping"])
 app.include_router(plagiarism.router, prefix="/api/plagiarism", tags=["plagiarism"])
 app.include_router(auth.router, prefix="/api/auth", tags=["auth"])
 app.include_router(blogs.router)
+app.include_router(careers.router)
+app.include_router(admin.router)
 
 logger = logging.getLogger(__name__)
 

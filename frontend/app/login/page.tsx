@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { login } from '@/lib/api';
 import { setAuthToken, setUserData, isAuthenticated, validateToken } from '@/lib/auth';
 import UniversityLogo from '@/components/UniversityLogo';
+import ThemeToggle from '@/components/ThemeToggle';
 import styles from '@/styles/Auth.module.css';
 
 export default function LoginPage() {
@@ -57,6 +58,11 @@ export default function LoginPage() {
           background: `radial-gradient(800px circle at ${mousePosition.x}px ${mousePosition.y}px, rgba(99, 102, 241, 0.15), transparent 40%)`
         }}
       />
+
+      {/* Theme Toggle */}
+      <div style={{ position: 'absolute', top: '1.5rem', right: '1.5rem', zIndex: 100 }}>
+        <ThemeToggle />
+      </div>
 
       {/* Trusted by section */}
       <div className={styles.trustedBy}>

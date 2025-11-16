@@ -39,6 +39,10 @@ export default function SideNav({ activeSection, onSectionChange }: SideNavProps
     { id: 'models', label: 'Models', icon: '🔮' },
   ];
 
+  const handleNavClick = (path: string) => {
+    router.push(path);
+  };
+
   return (
     <nav className={`${styles.sideNav} ${isCollapsed ? styles.collapsed : ''} ${mounted ? styles.mounted : ''}`}>
       <div className={styles.navHeader}>
@@ -77,6 +81,24 @@ export default function SideNav({ activeSection, onSectionChange }: SideNavProps
             </button>
           </li>
         ))}
+        <li>
+          <button
+            className={styles.menuItem}
+            onClick={() => handleNavClick('/blog')}
+          >
+            <span className={styles.menuIcon}>📝</span>
+            {!isCollapsed && <span className={styles.menuLabel}>Blog</span>}
+          </button>
+        </li>
+        <li>
+          <button
+            className={styles.menuItem}
+            onClick={() => handleNavClick('/careers')}
+          >
+            <span className={styles.menuIcon}>💼</span>
+            {!isCollapsed && <span className={styles.menuLabel}>Careers</span>}
+          </button>
+        </li>
       </ul>
 
       <div className={styles.navFooter}>

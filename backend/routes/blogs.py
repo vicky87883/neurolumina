@@ -10,19 +10,18 @@ from services.auth import decode_access_token, get_user_by_email
 import logging
 
 logger = logging.getLogger(__name__)
-security = HTTPBearer()
+security = HTTPBearer(auto_error=False)
 
-async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)) -> dict:
-    """Get current authenticated user"""
+async def get_current_user(credentials: Optional[HTTPAuthorizationCredentials] = Depends(security)) -> Optional[dict]:
+    """Get current authenticated user (optional for public endpoints)"""
+    if not credentials:
+        return None
     token = credentials.credentials
     try:
         payload = decode_access_token(token)
         user_id = payload.get("sub")
         if user_id is None:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Invalid authentication credentials"
-            )
+            return None
         
         # Get user details from database
         async with db_manager.get_async_session() as session:
@@ -35,10 +34,7 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
             row = result.fetchone()
             
             if not row:
-                raise HTTPException(
-                    status_code=status.HTTP_401_UNAUTHORIZED,
-                    detail="User not found"
-                )
+                return None
             
             return {
                 "id": row[0],
@@ -47,14 +43,9 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
                 "full_name": row[3],
                 "is_active": row[4]
             }
-    except HTTPException:
-        raise
     except Exception as e:
         logger.error(f"Error getting current user: {e}")
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid authentication credentials"
-        )
+        return None
 
 router = APIRouter(prefix="/api/blogs", tags=["blogs"])
 
@@ -138,7 +129,7 @@ async def get_blogs(
     limit: int = 20,
     published_only: bool = True,
     category: Optional[str] = None,
-    current_user: dict = Depends(get_current_user)
+    current_user: Optional[dict] = Depends(get_current_user)
 ):
     """Get list of blogs"""
     try:
@@ -204,7 +195,7 @@ async def get_blogs(
         )
 
 @router.get("/{blog_id}", response_model=BlogResponse)
-async def get_blog(blog_id: int, current_user: dict = Depends(get_current_user)):
+async def get_blog(blog_id: int, current_user: Optional[dict] = Depends(get_current_user)):
     """Get a single blog by ID"""
     try:
         await init_blogs_table()
@@ -260,8 +251,13 @@ async def get_blog(blog_id: int, current_user: dict = Depends(get_current_user))
         )
 
 @router.post("/", response_model=BlogResponse)
-async def create_blog(blog: BlogCreate, current_user: dict = Depends(get_current_user)):
-    """Create a new blog post"""
+async def create_blog(blog: BlogCreate, current_user: Optional[dict] = Depends(get_current_user)):
+    """Create a new blog post (requires authentication)"""
+    if not current_user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Authentication required"
+        )
     try:
         await init_blogs_table()
         async with db_manager.get_async_session() as session:
@@ -312,9 +308,14 @@ async def create_blog(blog: BlogCreate, current_user: dict = Depends(get_current
 async def update_blog(
     blog_id: int,
     blog: BlogUpdate,
-    current_user: dict = Depends(get_current_user)
+    current_user: Optional[dict] = Depends(get_current_user)
 ):
-    """Update a blog post (only by author)"""
+    """Update a blog post (only by author, requires authentication)"""
+    if not current_user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Authentication required"
+        )
     try:
         await init_blogs_table()
         async with db_manager.get_async_session() as session:
@@ -428,8 +429,13 @@ async def update_blog(
         )
 
 @router.delete("/{blog_id}")
-async def delete_blog(blog_id: int, current_user: dict = Depends(get_current_user)):
-    """Delete a blog post (only by author)"""
+async def delete_blog(blog_id: int, current_user: Optional[dict] = Depends(get_current_user)):
+    """Delete a blog post (only by author, requires authentication)"""
+    if not current_user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Authentication required"
+        )
     try:
         await init_blogs_table()
         async with db_manager.get_async_session() as session:

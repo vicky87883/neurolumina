@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { isAuthenticated, validateToken } from '@/lib/auth';
 import UniversityLogo from '@/components/UniversityLogo';
+import ThemeToggle from '@/components/ThemeToggle';
 import styles from '@/styles/LandingPage.module.css';
 
 export default function LandingPage() {
@@ -81,6 +82,9 @@ export default function LandingPage() {
             <a href="#features" className={styles.navLink}>Features</a>
             <a href="#solutions" className={styles.navLink}>Solutions</a>
             <a href="#pricing" className={styles.navLink}>Pricing</a>
+            <Link href="/blog" className={styles.navLink}>Blog</Link>
+            <Link href="/careers" className={styles.navLink}>Careers</Link>
+            <ThemeToggle />
             <Link href="/login" className={styles.navButton}>
               Sign In
             </Link>

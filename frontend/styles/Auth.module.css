@@ -6,10 +6,11 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: #0a0a0a;
+  background: var(--bg-primary);
   padding: 2rem;
   position: relative;
   overflow: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* Animated background gradient */
@@ -36,7 +37,7 @@
 }
 
 .trustedByText {
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--text-tertiary);
   font-size: 0.875rem;
   margin-bottom: 1rem;
   text-transform: uppercase;
@@ -54,8 +55,8 @@
 
 .logoItem {
   padding: 0.5rem 1rem;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
   border-radius: 8px;
   transition: all 0.3s ease;
   animation: fadeInUp 0.8s ease backwards;
@@ -72,21 +73,21 @@
 .logoItem:nth-child(6) { animation-delay: 0.6s; }
 
 .logoItem:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--bg-hover);
   border-color: rgba(99, 102, 241, 0.5);
   transform: translateY(-2px);
 }
 
 /* Auth Card */
 .authCard {
-  background: rgba(255, 255, 255, 0.03);
+  background: var(--bg-card);
   backdrop-filter: blur(20px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--border-primary);
   border-radius: 24px;
   padding: 3rem;
   width: 100%;
   max-width: 480px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
   animation: slideUp 0.6s ease;
   position: relative;
   z-index: 1;
@@ -173,13 +174,13 @@
 .authHeader h1 {
   font-size: 2rem;
   font-weight: 800;
-  color: #ffffff;
+  color: var(--text-primary);
   margin-bottom: 0.5rem;
   letter-spacing: -0.02em;
 }
 
 .authHeader p {
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--text-secondary);
   font-size: 1rem;
 }
 
@@ -198,7 +199,7 @@
 
 .formGroup label {
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.9);
+  color: var(--text-primary);
   font-size: 0.95rem;
 }
 
@@ -211,7 +212,7 @@
 .inputIcon {
   position: absolute;
   left: 1rem;
-  color: rgba(255, 255, 255, 0.4);
+  color: var(--text-tertiary);
   pointer-events: none;
   z-index: 1;
   transition: color 0.3s ease;
@@ -220,23 +221,23 @@
 .input {
   width: 100%;
   padding: 0.875rem 1rem 0.875rem 3rem;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
   border-radius: 12px;
   font-size: 1rem;
-  color: #ffffff;
+  color: var(--text-primary);
   transition: all 0.3s ease;
   font-family: inherit;
 }
 
 .input::placeholder {
-  color: rgba(255, 255, 255, 0.3);
+  color: var(--text-tertiary);
 }
 
 .input:focus {
   outline: none;
   border-color: rgba(99, 102, 241, 0.5);
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--bg-hover);
   box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
 }
 
@@ -261,7 +262,7 @@
 .passwordStrengthBar {
   flex: 1;
   height: 4px;
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--bg-secondary);
   border-radius: 2px;
   overflow: hidden;
 }
@@ -361,11 +362,11 @@
   text-align: center;
   margin-top: 2rem;
   padding-top: 2rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 1px solid var(--border-primary);
 }
 
 .authFooter p {
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--text-secondary);
   font-size: 0.95rem;
   margin-bottom: 0.5rem;
 }

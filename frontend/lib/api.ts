@@ -3,11 +3,14 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 // Get auth token for authenticated requests
 function getAuthHeaders(): HeadersInit {
   const token = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null;
+  const adminToken = typeof window !== 'undefined' ? localStorage.getItem('admin_token') : null;
   const headers: HeadersInit = {
     'Content-Type': 'application/json',
   };
-  if (token) {
-    headers['Authorization'] = `Bearer ${token}`;
+  // Prefer admin token if available, otherwise use regular token
+  const authToken = adminToken || token;
+  if (authToken) {
+    headers['Authorization'] = `Bearer ${authToken}`;
   }
   return headers;
 }
@@ -437,6 +440,168 @@ export async function deleteBlog(blogId: number): Promise<void> {
   } catch (error: any) {
     console.error('Error deleting blog:', error);
     throw new Error(error.message || 'Failed to delete blog');
+  }
+}
+
+// Career API functions
+export interface Career {
+  id: number;
+  title: string;
+  department: string;
+  location: string;
+  type: string;
+  description: string;
+  requirements?: string[];
+  benefits?: string[];
+  salary_range?: string;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CareerCreate {
+  title: string;
+  department: string;
+  location: string;
+  type: string;
+  description: string;
+  requirements?: string[];
+  benefits?: string[];
+  salary_range?: string;
+  is_active?: boolean;
+}
+
+export interface CareerUpdate {
+  title?: string;
+  department?: string;
+  location?: string;
+  type?: string;
+  description?: string;
+  requirements?: string[];
+  benefits?: string[];
+  salary_range?: string;
+  is_active?: boolean;
+}
+
+export async function getCareers(
+  skip: number = 0,
+  limit: number = 50,
+  activeOnly: boolean = true,
+  department?: string,
+  location?: string
+): Promise<Career[]> {
+  try {
+    const params = new URLSearchParams({
+      skip: skip.toString(),
+      limit: limit.toString(),
+      active_only: activeOnly.toString(),
+    });
+    if (department) {
+      params.append('department', department);
+    }
+    if (location) {
+      params.append('location', location);
+    }
+
+    const response = await fetch(`${API_BASE_URL}/api/careers/?${params}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      const errorMessage = errorData.detail || errorData.message || response.statusText;
+      throw new Error(errorMessage);
+    }
+
+    return await response.json();
+  } catch (error: any) {
+    console.error('Error fetching careers:', error);
+    throw new Error(error.message || 'Failed to fetch careers');
+  }
+}
+
+export async function getCareer(careerId: number): Promise<Career> {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/careers/${careerId}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      const errorMessage = errorData.detail || errorData.message || response.statusText;
+      throw new Error(errorMessage);
+    }
+
+    return await response.json();
+  } catch (error: any) {
+    console.error('Error fetching career:', error);
+    throw new Error(error.message || 'Failed to fetch career');
+  }
+}
+
+export async function createCareer(career: CareerCreate): Promise<Career> {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/careers/`, {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify(career),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      const errorMessage = errorData.detail || errorData.message || response.statusText;
+      throw new Error(errorMessage);
+    }
+
+    return await response.json();
+  } catch (error: any) {
+    console.error('Error creating career:', error);
+    throw new Error(error.message || 'Failed to create career');
+  }
+}
+
+export async function updateCareer(careerId: number, career: CareerUpdate): Promise<Career> {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/careers/${careerId}`, {
+      method: 'PUT',
+      headers: getAuthHeaders(),
+      body: JSON.stringify(career),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      const errorMessage = errorData.detail || errorData.message || response.statusText;
+      throw new Error(errorMessage);
+    }
+
+    return await response.json();
+  } catch (error: any) {
+    console.error('Error updating career:', error);
+    throw new Error(error.message || 'Failed to update career');
+  }
+}
+
+export async function deleteCareer(careerId: number): Promise<void> {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/careers/${careerId}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders(),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      const errorMessage = errorData.detail || errorData.message || response.statusText;
+      throw new Error(errorMessage);
+    }
+  } catch (error: any) {
+    console.error('Error deleting career:', error);
+    throw new Error(error.message || 'Failed to delete career');
   }
 }
 

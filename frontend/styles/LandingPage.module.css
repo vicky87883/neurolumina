@@ -2,10 +2,11 @@
 
 .container {
   min-height: 100vh;
-  background: #0a0a0a;
-  color: #ffffff;
+  background: var(--bg-primary);
+  color: var(--text-primary);
   position: relative;
   overflow-x: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* Animated Background */
@@ -24,15 +25,15 @@
   left: 0;
   right: 0;
   z-index: 1000;
-  background: rgba(10, 10, 10, 0.8);
+  background: var(--bg-navbar);
   backdrop-filter: blur(20px) saturate(180%);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid var(--border-primary);
   transition: all 0.3s ease;
 }
 
 .navbar.scrolled {
-  background: rgba(10, 10, 10, 0.95);
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+  background: var(--bg-navbar);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
 }
 
 .navContainer {
