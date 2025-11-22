@@ -97,6 +97,7 @@ export default function LandingPage() {
 
       {/* Hero Section */}
       <section className={styles.hero}>
+        <div className={styles.heroBackgroundImage}></div>
         <div className={styles.heroContainer}>
           <div className={styles.heroContent}>
             <div className={styles.heroBadge}>
@@ -191,20 +192,51 @@ export default function LandingPage() {
                   <span></span>
                   <span></span>
                 </div>
+                <div className={styles.cardTitle}>code.py</div>
               </div>
               <div className={styles.cardContent}>
                 <div className={styles.codeBlock}>
                   <div className={styles.codeLine}>
-                    <span className={styles.codeKeyword}>import</span> IntelliThesis
+                    <span className={styles.lineNumber}>1</span>
+                    <span className={styles.codeText}>
+                      <span className={styles.codeKeyword}>from</span> intellithesis <span className={styles.codeKeyword}>import</span> <span className={styles.codeFunction}>PlagiarismDetector</span>
+                    </span>
                   </div>
                   <div className={styles.codeLine}>
-                    <span className={styles.codeFunction}>detect</span>(text)
+                    <span className={styles.lineNumber}>2</span>
+                    <span className={styles.codeText}></span>
                   </div>
                   <div className={styles.codeLine}>
-                    <span className={styles.codeFunction}>scrape</span>(url)
+                    <span className={styles.lineNumber}>3</span>
+                    <span className={styles.codeText}><span className={styles.codeComment}># Initialize detector</span></span>
                   </div>
                   <div className={styles.codeLine}>
-                    <span className={styles.codeFunction}>train</span>(model)
+                    <span className={styles.lineNumber}>4</span>
+                    <span className={styles.codeText}>detector = <span className={styles.codeFunction}>PlagiarismDetector</span>()</span>
+                  </div>
+                  <div className={styles.codeLine}>
+                    <span className={styles.lineNumber}>5</span>
+                    <span className={styles.codeText}></span>
+                  </div>
+                  <div className={styles.codeLine}>
+                    <span className={styles.lineNumber}>6</span>
+                    <span className={styles.codeText}><span className={styles.codeComment}># Analyze document</span></span>
+                  </div>
+                  <div className={styles.codeLine}>
+                    <span className={styles.lineNumber}>7</span>
+                    <span className={styles.codeText}>result = detector.<span className={styles.codeFunction}>analyze</span>(<span className={styles.codeString}>"document.pdf"</span>)</span>
+                  </div>
+                  <div className={styles.codeLine}>
+                    <span className={styles.lineNumber}>8</span>
+                    <span className={styles.codeText}></span>
+                  </div>
+                  <div className={styles.codeLine}>
+                    <span className={styles.lineNumber}>9</span>
+                    <span className={styles.codeText}><span className={styles.codeFunction}>print</span>(result.<span className={styles.codeProperty}>similarity</span>)</span>
+                  </div>
+                  <div className={styles.codeLine}>
+                    <span className={styles.lineNumber}>10</span>
+                    <span className={styles.codeText}><span className={styles.codeComment}># Output: 99.9% accuracy</span></span>
                   </div>
                 </div>
               </div>
@@ -295,6 +327,68 @@ export default function LandingPage() {
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Streams Section */}
+      <section id="streams" className={styles.streams}>
+        <div className={styles.sectionContainer}>
+          <div className={styles.sectionHeader}>
+            <h2 className={styles.sectionTitle}>Explore by Stream</h2>
+            <p className={styles.sectionDescription}>
+              Discover specialized resources and tools for your field of study
+            </p>
+          </div>
+          <div className={styles.streamsGrid}>
+            <Link href="/streams/physics" className={styles.streamCard}>
+              <div className={styles.streamIcon}>⚛️</div>
+              <h3 className={styles.streamTitle}>Physics</h3>
+              <p className={styles.streamDescription}>
+                Research papers, quantum mechanics, theoretical physics, and cutting-edge discoveries
+              </p>
+              <div className={styles.streamArrow}>→</div>
+            </Link>
+            <Link href="/streams/computer-science" className={styles.streamCard}>
+              <div className={styles.streamIcon}>💻</div>
+              <h3 className={styles.streamTitle}>Computer Science</h3>
+              <p className={styles.streamDescription}>
+                Algorithms, code snippets, AI/ML research, and software engineering insights
+              </p>
+              <div className={styles.streamArrow}>→</div>
+            </Link>
+            <Link href="/streams/chemistry" className={styles.streamCard}>
+              <div className={styles.streamIcon}>🧪</div>
+              <h3 className={styles.streamTitle}>Chemistry</h3>
+              <p className={styles.streamDescription}>
+                Organic synthesis, molecular structures, and chemical research papers
+              </p>
+              <div className={styles.streamArrow}>→</div>
+            </Link>
+            <Link href="/streams/mathematics" className={styles.streamCard}>
+              <div className={styles.streamIcon}>📐</div>
+              <h3 className={styles.streamTitle}>Mathematics</h3>
+              <p className={styles.streamDescription}>
+                Pure mathematics, proofs, equations, and mathematical research
+              </p>
+              <div className={styles.streamArrow}>→</div>
+            </Link>
+            <Link href="/streams/biology" className={styles.streamCard}>
+              <div className={styles.streamIcon}>🧬</div>
+              <h3 className={styles.streamTitle}>Biology</h3>
+              <p className={styles.streamDescription}>
+                Genetics, molecular biology, ecology, and life sciences research
+              </p>
+              <div className={styles.streamArrow}>→</div>
+            </Link>
+            <Link href="/streams/engineering" className={styles.streamCard}>
+              <div className={styles.streamIcon}>⚙️</div>
+              <h3 className={styles.streamTitle}>Engineering</h3>
+              <p className={styles.streamDescription}>
+                Mechanical, electrical, civil, and aerospace engineering resources
+              </p>
+              <div className={styles.streamArrow}>→</div>
+            </Link>
           </div>
         </div>
       </section>
