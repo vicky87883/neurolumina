@@ -19,6 +19,9 @@ export default function BlogDetailPage() {
     const fetchBlog = async () => {
       try {
         setLoading(true);
+        if (!params || !params.id) {
+          throw new Error('Invalid blog ID');
+        }
         const blogId = parseInt(params.id as string);
         if (isNaN(blogId)) {
           throw new Error('Invalid blog ID');
@@ -32,10 +35,10 @@ export default function BlogDetailPage() {
       }
     };
 
-    if (params.id) {
+    if (params && params.id) {
       fetchBlog();
     }
-  }, [params.id]);
+  }, [params]);
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);

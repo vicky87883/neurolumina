@@ -241,7 +241,7 @@
 .jobHeader {
   display: flex;
   justify-content: space-between;
-  align-items: start;
+  align-items: flex-start;
   margin-bottom: 0.5rem;
   gap: 1rem;
 }
