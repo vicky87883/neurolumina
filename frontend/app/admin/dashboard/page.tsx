@@ -6,7 +6,17 @@ import { getBlogs, createBlog, updateBlog, deleteBlog, Blog } from '@/lib/api';
 import { getCareers, createCareer, updateCareer, deleteCareer, Career } from '@/lib/api';
 import styles from '@/styles/AdminDashboard.module.css';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://13.203.154.38:8000';
+// Use HTTPS in production, HTTP for local development
+const getApiUrl = () => {
+  if (typeof window !== 'undefined') {
+    if (window.location.protocol === 'https:') {
+      return process.env.NEXT_PUBLIC_API_URL || 'https://api.intellithesis.com';
+    }
+  }
+  return process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+};
+
+const API_BASE_URL = getApiUrl();
 
 function getAdminToken(): string | null {
   if (typeof window !== 'undefined') {

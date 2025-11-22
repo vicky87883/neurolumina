@@ -4,7 +4,17 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import styles from '@/styles/Admin.module.css';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://13.203.154.38:8000';
+// Use HTTPS in production, HTTP for local development
+const getApiUrl = () => {
+  if (typeof window !== 'undefined') {
+    if (window.location.protocol === 'https:') {
+      return process.env.NEXT_PUBLIC_API_URL || 'https://api.intellithesis.com';
+    }
+  }
+  return process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+};
+
+const API_BASE_URL = getApiUrl();
 
 interface AdminCredentials {
   username: string;

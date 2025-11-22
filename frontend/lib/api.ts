@@ -1,4 +1,16 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://13.203.154.38:8000';
+// Use HTTPS in production, HTTP for local development
+const getApiUrl = () => {
+  if (typeof window !== 'undefined') {
+    // If frontend is on HTTPS, use HTTPS for API
+    if (window.location.protocol === 'https:') {
+      return process.env.NEXT_PUBLIC_API_URL || 'https://api.intellithesis.com';
+    }
+  }
+  // Default to environment variable or HTTP for local dev
+  return process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+};
+
+const API_BASE_URL = getApiUrl();
 
 // Get auth token for authenticated requests
 function getAuthHeaders(): HeadersInit {
