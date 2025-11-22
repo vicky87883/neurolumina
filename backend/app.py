@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from fastapi.responses import Response
 import logging
+import os
 from routes import chat, training, scraping, plagiarism, auth, blogs, careers, admin
 from services.database import db_manager
 
@@ -24,7 +25,6 @@ async def add_security_headers(request, call_next):
     return response
 
 # CORS middleware for frontend communication
-import os
 cors_origins = os.getenv("CORS_ORIGINS", "http://localhost:3000,http://127.0.0.1:3000,http://13.203.154.38:3000").split(",")
 app.add_middleware(
     CORSMiddleware,
