@@ -14,10 +14,7 @@ class DatabaseManager:
     """PostgreSQL database connection manager"""
     
     def __init__(self):
-        self.database_url = os.getenv(
-            "DATABASE_URL",
-            "postgresql://postgres:Vikram9817642072@db.atrhbcbupdimmcbyfabc.supabase.co:5432/postgres"
-        )
+        self.database_url = os.getenv("DATABASE_URL", None)
         # Store original URL for sync engine (psycopg2 handles sslmode in URL)
         # For asyncpg, remove query parameters (SSL handled via connect_args)
         async_url = self.database_url.replace("postgresql://", "postgresql+asyncpg://")
@@ -35,7 +32,10 @@ class DatabaseManager:
         try:
             # Validate database URL format
             if not self.database_url or self.database_url == "postgresql://user:password@localhost:5432/llm_training":
-                logger.warning("Using default DATABASE_URL. Please set DATABASE_URL environment variable for production.")
+                logger.warning("DATABASE_URL not set. Database features will be unavailable.")
+                logger.warning("To enable database features, set DATABASE_URL environment variable.")
+                logger.warning("Format: postgresql://user:password@host:port/database")
+                return  # Don't raise error, allow app to run without database
             
             # Synchronous engine
             self.engine = create_engine(
@@ -86,11 +86,15 @@ class DatabaseManager:
         except Exception as e:
             error_msg = str(e)
             if "nodename nor servname provided" in error_msg or "not known" in error_msg:
-                logger.error(f"Database hostname resolution failed: {error_msg}")
-                logger.error("Please check your DATABASE_URL environment variable. Format: postgresql://user:password@host:port/database")
+                logger.warning(f"Database hostname resolution failed: {error_msg}")
+                logger.warning("Database features will be unavailable. Please set DATABASE_URL environment variable.")
+                logger.warning("Format: postgresql://user:password@host:port/database")
+                logger.warning("The application will continue to run without database features.")
+                # Don't raise - allow app to run without database
             else:
-                logger.error(f"Error initializing database: {error_msg}")
-            raise
+                logger.warning(f"Error initializing database: {error_msg}")
+                logger.warning("The application will continue to run without database features.")
+                # Don't raise - allow app to run without database
     
     def get_sync_session(self):
         """Get synchronous database session"""
@@ -171,6 +175,11 @@ class DatabaseManager:
         from sqlalchemy import MetaData, Table, Column, Integer, String, Text, Float, DateTime
         from datetime import datetime
         
+        # Check if engine is initialized
+        if not self.async_engine:
+            logger.warning("Database engine not initialized. Skipping table creation.")
+            return {"status": "skipped", "message": "Database not configured"}
+        
         metadata = MetaData()
         
         # Training data table
@@ -241,8 +250,12 @@ class DatabaseManager:
             logger.info("Database tables created successfully")
             return {"status": "success", "message": "Tables created"}
         except Exception as e:
-            logger.error(f"Error creating tables: {str(e)}")
-            return {"status": "error", "message": str(e)}
+            error_msg = str(e)
+            if "not known" in error_msg or "nodename" in error_msg:
+                logger.warning(f"Database hostname cannot be resolved. Please set DATABASE_URL environment variable. Error: {error_msg}")
+                return {"status": "skipped", "message": "Database not configured - hostname cannot be resolved"}
+            logger.error(f"Error creating tables: {error_msg}")
+            return {"status": "error", "message": error_msg}
 
 
 # Global database manager instance

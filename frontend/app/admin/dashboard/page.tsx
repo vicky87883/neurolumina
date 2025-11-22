@@ -6,7 +6,7 @@ import { getBlogs, createBlog, updateBlog, deleteBlog, Blog } from '@/lib/api';
 import { getCareers, createCareer, updateCareer, deleteCareer, Career } from '@/lib/api';
 import styles from '@/styles/AdminDashboard.module.css';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://13.203.154.38:8000';
 
 function getAdminToken(): string | null {
   if (typeof window !== 'undefined') {

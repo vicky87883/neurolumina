@@ -24,14 +24,11 @@ async def add_security_headers(request, call_next):
     return response
 
 # CORS middleware for frontend communication
+import os
+cors_origins = os.getenv("CORS_ORIGINS", "http://localhost:3000,http://127.0.0.1:3000,http://13.203.154.38:3000").split(",")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000", 
-        "http://127.0.0.1:3000",
-        "https://intellithesis.com",
-        "http://intellithesis.com"
-    ],
+    allow_origins=cors_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -55,9 +52,15 @@ async def startup_event():
     """Initialize database on startup"""
     try:
         db_manager.initialize()
-        # Create tables if they don't exist
-        await db_manager.create_tables()
-        logger.info("Database initialized successfully")
+        # Create tables if they don't exist (only if database is configured)
+        if db_manager.async_engine:
+            result = await db_manager.create_tables()
+            if result.get("status") == "success":
+                logger.info("Database initialized successfully")
+            else:
+                logger.warning(f"Database table creation: {result.get('message', 'Unknown error')}")
+        else:
+            logger.info("Application started without database (database features disabled)")
     except Exception as e:
         logger.warning(f"Database initialization skipped: {str(e)}")
         logger.warning("Web scraping will work, but database features will be unavailable")
